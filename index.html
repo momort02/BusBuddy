@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#10131b">
+  <meta name="description" content="Organisez vos trajets et partagez vos réponses avec vos proches.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icons/icon-192.png">
+  <title>BusBuddy</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="BusBuddy accueil"><span class="brand-mark">B</span><span>BusBuddy</span></a>
+      <button id="logoutBtn" class="ghost hidden" type="button">Déconnexion</button>
+    </header>
+
+    <section id="authView" class="auth-view">
+      <div class="hero">
+        <p class="eyebrow">VOS TRAJETS, ENSEMBLE</p>
+        <h1>Vous prenez<br>le même bus ?</h1>
+        <p class="muted">Sachez qui sera au rendez-vous, sans devoir envoyer un message à chaque fois.</p>
+      </div>
+      <div class="panel">
+        <div class="tabs">
+          <button class="tab active" data-auth-tab="login">Connexion</button>
+          <button class="tab" data-auth-tab="register">Créer un compte</button>
+        </div>
+        <form id="authForm">
+          <label for="email">Adresse e-mail</label>
+          <input id="email" type="email" autocomplete="email" placeholder="vous@exemple.fr" required>
+          <label for="password">Mot de passe</label>
+          <input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="6 caractères minimum" required>
+          <button id="authSubmit" class="primary full" type="submit">Se connecter</button>
+          <p id="authError" class="error" role="alert"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="appView" class="hidden">
+      <div class="welcome-row">
+        <div><p class="eyebrow">ESPACE PERSONNEL</p><h1 id="welcomeTitle">Bonjour</h1></div>
+        <button id="notifyBtn" class="secondary" type="button">Activer les notifications</button>
+      </div>
+      <div class="section-heading"><div><p class="eyebrow">AUJOURD'HUI</p><h2>Mes groupes</h2></div><button id="createGroupBtn" class="primary" type="button">+ Groupe</button></div>
+      <div id="groupsList" class="groups-list"></div>
+      <div id="emptyGroups" class="empty hidden"><div class="empty-icon">＋</div><h3>Pas encore de groupe</h3><p>Crée un groupe et invite tes amis avec un code.</p></div>
+      <div class="panel invite-panel">
+        <h3>Rejoindre un groupe</h3>
+        <p class="muted">Entre le code d'invitation reçu.</p>
+        <form id="joinGroupForm" class="inline-form"><input id="inviteCode" maxlength="8" placeholder="CODE" autocomplete="off" required><button class="secondary" type="submit">Rejoindre</button></form>
+        <p id="joinError" class="error" role="alert"></p>
+      </div>
+    </section>
+
+    <dialog id="groupDialog" class="dialog">
+      <form id="groupForm" method="dialog">
+        <div class="dialog-head"><div><p class="eyebrow">NOUVEAU GROUPE</p><h2>Créer un groupe</h2></div><button class="icon-btn" value="cancel" aria-label="Fermer">×</button></div>
+        <label for="groupName">Nom du groupe</label><input id="groupName" maxlength="40" placeholder="Ex. Les bus du lycée" required>
+        <button class="primary full" type="submit">Créer le groupe</button>
+        <p id="groupError" class="error" role="alert"></p>
+      </form>
+    </dialog>
+
+    <dialog id="tripDialog" class="dialog">
+      <form id="tripForm" method="dialog">
+        <div class="dialog-head"><div><p class="eyebrow">NOUVEAU TRAJET</p><h2>Ajouter un trajet</h2></div><button class="icon-btn" value="cancel" aria-label="Fermer">×</button></div>
+        <label for="tripName">Nom du trajet</label><input id="tripName" maxlength="50" placeholder="Bus du matin" required>
+        <label for="tripTime">Heure du départ</label><input id="tripTime" type="time" value="07:15" required>
+        <label>Jours actifs</label>
+        <div class="days">
+          <label><input type="checkbox" name="day" value="1" checked> Lun</label><label><input type="checkbox" name="day" value="2" checked> Mar</label>
+          <label><input type="checkbox" name="day" value="3" checked> Mer</label><label><input type="checkbox" name="day" value="4" checked> Jeu</label>
+          <label><input type="checkbox" name="day" value="5" checked> Ven</label><label><input type="checkbox" name="day" value="6"> Sam</label><label><input type="checkbox" name="day" value="0"> Dim</label>
+        </div>
+        <label for="reminderTime">Quand recevoir la question ?</label><input id="reminderTime" type="time" value="06:30" required>
+        <label for="deadlineTime">Heure limite de réponse</label><input id="deadlineTime" type="time" value="07:00" required>
+        <button class="primary full" type="submit">Enregistrer le trajet</button>
+        <p id="tripError" class="error" role="alert"></p>
+      </form>
+    </dialog>
+
+    <dialog id="groupDetailDialog" class="dialog wide">
+      <div id="groupDetailContent"></div>
+    </dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <footer>BusBuddy <span>·</span> Bêta privée</footer>
+  </main>
+  <script type="module" src="/src/app.js"></script>
+</body>
+</html>
