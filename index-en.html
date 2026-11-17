@@ -1,0 +1,143 @@
+<!Doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f3ec">
+  <meta name="description" content="Organize your trips and share your responses with your loved ones.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icons/icon-192.png">
+  <title>BusBuddy</title>
+  <link rel="stylesheet" href="redesign.css">
+  <script type="text/javascript">
+    (function (c, l, a, r, i, t, y) {
+      c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+      t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+      y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+    })(window, document, "clarity", "script", "z8fjvigtkn");
+  </script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FYK1RS1GR9"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-FYK1RS1GR9');
+  </script>
+</head>
+
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="BusBuddy home"><span class="brand-mark">B</span><span>BusBuddy</span></a>
+      <button id="logoutBtn" class="ghost hidden" type="button">Log out</button>
+    </header>
+
+    <section id="authView" class="auth-view">
+      <div class="hero">
+        <p class="eyebrow">YOUR TRIPS, TOGETHER</p>
+        <h1>Taking<br>the same bus?</h1>
+        <p class="muted">Know who will be there, without having to send a message every time.</p>
+      </div>
+      <div class="panel">
+        <div class="tabs">
+          <button class="tab active" data-auth-tab="login">Log in</button>
+          <button class="tab" data-auth-tab="register">Create an account</button>
+        </div>
+        <form id="authForm">
+          <label for="email">Email address</label>
+          <input id="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+          <label for="password">Password</label>
+          <input id="password" type="password" autocomplete="current-password" minlength="6"
+            placeholder="6 characters minimum" required>
+          <button id="authSubmit" class="primary full" type="submit">Log in</button>
+          <p id="authError" class="error" role="alert"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="appView" class="hidden">
+      <div class="welcome-row">
+        <div>
+          <p class="eyebrow">PERSONAL SPACE</p>
+          <h1 id="welcomeTitle">Hello</h1>
+        </div>
+        <button id="notifyBtn" class="secondary" type="button">Enable notifications</button>
+      </div>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">TODAY</p>
+          <h2>My groups</h2>
+        </div><button id="createGroupBtn" class="primary" type="button">+ Group</button>
+      </div>
+      <div id="groupsList" class="groups-list"></div>
+      <div id="emptyGroups" class="empty hidden">
+        <div class="empty-icon">＋</div>
+        <h3>No groups yet</h3>
+        <p>Create a group and invite your friends with a code.</p>
+      </div>
+      <div class="panel invite-panel">
+        <h3>Join a group</h3>
+        <p class="muted">Enter the invite code you received.</p>
+        <form id="joinGroupForm" class="inline-form"><input id="inviteCode" maxlength="8" placeholder="CODE"
+            autocomplete="off" required><button class="secondary" type="submit">Join</button></form>
+        <p id="joinError" class="error" role="alert"></p>
+      </div>
+    </section>
+
+    <dialog id="groupDialog" class="dialog">
+      <form id="groupForm" method="dialog">
+        <div class="dialog-head">
+          <div>
+            <p class="eyebrow">NEW GROUP</p>
+            <h2>Create a group</h2>
+          </div><button class="icon-btn" value="cancel" aria-label="Close">×</button>
+        </div>
+        <label for="groupName">Group name</label><input id="groupName" maxlength="40"
+          placeholder="E.g. High school buses" required>
+        <button class="primary full" type="submit">Create group</button>
+        <p id="groupError" class="error" role="alert"></p>
+      </form>
+    </dialog>
+
+    <dialog id="tripDialog" class="dialog">
+      <form id="tripForm" method="dialog">
+        <div class="dialog-head">
+          <div>
+            <p class="eyebrow">NEW TRIP</p>
+            <h2>Add a trip</h2>
+          </div><button class="icon-btn" value="cancel" aria-label="Close">×</button>
+        </div>
+        <label for="tripName">Trip name</label><input id="tripName" maxlength="50" placeholder="Morning bus"
+          required>
+        <label for="tripTime">Departure time</label><input id="tripTime" type="time" value="07:15" required>
+        <label>Active days</label>
+        <div class="days">
+          <label><input type="checkbox" name="day" value="1" checked> Mon</label><label><input type="checkbox"
+              name="day" value="2" checked> Tue</label>
+          <label><input type="checkbox" name="day" value="3" checked> Wed</label><label><input type="checkbox"
+              name="day" value="4" checked> Thu</label>
+          <label><input type="checkbox" name="day" value="5" checked> Fri</label><label><input type="checkbox"
+              name="day" value="6"> Sat</label><label><input type="checkbox" name="day" value="0"> Sun</label>
+        </div>
+        <label for="reminderTime">When to receive the question?</label><input id="reminderTime" type="time" value="06:30"
+          required>
+        <label for="deadlineTime">Response deadline</label><input id="deadlineTime" type="time" value="07:00"
+          required>
+        <button class="primary full" type="submit">Save trip</button>
+        <p id="tripError" class="error" role="alert"></p>
+      </form>
+    </dialog>
+
+    <dialog id="groupDetailDialog" class="dialog wide">
+      <div id="groupDetailContent"></div>
+    </dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <footer>BusBuddy <span>·</span> Private beta</footer>
+  </main>
+  <script type="module" src="src/app.js"></script>
+</body>
+
+</html>
