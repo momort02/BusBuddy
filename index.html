@@ -1,4 +1,4 @@
-<!Doctype html>
+<!doctype html>
 <html lang="fr">
 
 <head>
@@ -8,23 +8,21 @@
   <meta name="description" content="Organisez vos trajets et partagez vos réponses avec vos proches.">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icons/icon-192.png">
-  <link rel="alternate" hreflang="en" href="index-en.html" />
   <title>BusBuddy</title>
   <link rel="stylesheet" href="redesign.css">
   <script type="text/javascript">
     (function (c, l, a, r, i, t, y) {
       c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
-      t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+      t = l.createElement(r); t.async = 1; t.src = "https://clarity.ms" + i;
       y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
     })(window, document, "clarity", "script", "z8fjvigtkn");
   </script>
   <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FYK1RS1GR9"></script>
+  <script async src="https://googletagmanager.com"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
-
     gtag('config', 'G-FYK1RS1GR9');
   </script>
 </head>
@@ -32,28 +30,32 @@
 <body>
   <main class="shell">
     <header class="topbar">
-      <a class="brand" href="/" aria-label="BusBuddy accueil"><span class="brand-mark">B</span><span>BusBuddy</span></a>
-      <button id="logoutBtn" class="ghost hidden" type="button">Déconnexion</button>
+      <a class="brand" href="/" data-i18n-aria="brandLabel" aria-label="BusBuddy accueil">
+        <span class="brand-mark">B</span><span>BusBuddy</span>
+      </a>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button id="langToggle" class="ghost" type="button">EN / FR</button>
+        <button id="logoutBtn" class="ghost hidden" type="button" data-i18n="logout">Déconnexion</button>
+      </div>
     </header>
 
     <section id="authView" class="auth-view">
       <div class="hero">
-        <p class="eyebrow">VOS TRAJETS, ENSEMBLE</p>
-        <h1>Vous prenez<br>le même bus ?</h1>
-        <p class="muted">Sachez qui sera au rendez-vous, sans devoir envoyer un message à chaque fois.</p>
+        <p class="eyebrow" data-i18n="heroEyebrow">VOS TRAJETS, ENSEMBLE</p>
+        <h1 data-i18n="heroTitle" data-i18n-html="true">Vous prenez<br>le même bus ?</h1>
+        <p class="muted" data-i18n="heroSub">Sachez qui sera au rendez-vous, sans devoir envoyer un message à chaque fois.</p>
       </div>
       <div class="panel">
         <div class="tabs">
-          <button class="tab active" data-auth-tab="login">Connexion</button>
-          <button class="tab" data-auth-tab="register">Créer un compte</button>
+          <button class="tab active" data-auth-tab="login" data-i18n="tabLogin">Connexion</button>
+          <button class="tab" data-auth-tab="register" data-i18n="tabRegister">Créer un compte</button>
         </div>
         <form id="authForm">
-          <label for="email">Adresse e-mail</label>
-          <input id="email" type="email" autocomplete="email" placeholder="vous@exemple.fr" required>
-          <label for="password">Mot de passe</label>
-          <input id="password" type="password" autocomplete="current-password" minlength="6"
-            placeholder="6 caractères minimum" required>
-          <button id="authSubmit" class="primary full" type="submit">Se connecter</button>
+          <label for="email" data-i18n="emailLabel">Adresse e-mail</label>
+          <input id="email" type="email" autocomplete="email" data-i18n-placeholder="emailPlaceholder" placeholder="vous@exemple.fr" required>
+          <label for="password" data-i18n="passwordLabel">Mot de passe</label>
+          <input id="password" type="password" autocomplete="current-password" minlength="6" data-i18n-placeholder="passwordPlaceholder" placeholder="6 caractères minimum" required>
+          <button id="authSubmit" class="primary full" type="submit" data-i18n="loginBtn">Se connecter</button>
           <p id="authError" class="error" role="alert"></p>
         </form>
       </div>
@@ -62,28 +64,31 @@
     <section id="appView" class="hidden">
       <div class="welcome-row">
         <div>
-          <p class="eyebrow">ESPACE PERSONNEL</p>
+          <p class="eyebrow" data-i18n="personalSpace">ESPACE PERSONNEL</p>
           <h1 id="welcomeTitle">Bonjour</h1>
         </div>
-        <button id="notifyBtn" class="secondary" type="button">Activer les notifications</button>
+        <button id="notifyBtn" class="secondary" type="button" data-i18n="enableNotif">Activer les notifications</button>
       </div>
       <div class="section-heading">
         <div>
-          <p class="eyebrow">AUJOURD'HUI</p>
-          <h2>Mes groupes</h2>
-        </div><button id="createGroupBtn" class="primary" type="button">+ Groupe</button>
+          <p class="eyebrow" data-i18n="today">AUJOURD'HUI</p>
+          <h2 data-i18n="myGroups">Mes groupes</h2>
+        </div>
+        <button id="createGroupBtn" class="primary" type="button" data-i18n="newGroupBtn">+ Groupe</button>
       </div>
       <div id="groupsList" class="groups-list"></div>
       <div id="emptyGroups" class="empty hidden">
         <div class="empty-icon">＋</div>
-        <h3>Pas encore de groupe</h3>
-        <p>Crée un groupe et invite tes amis avec un code.</p>
+        <h3 data-i18n="noGroupsTitle">Pas encore de groupe</h3>
+        <p data-i18n="noGroupsSub">Crée un groupe et invite tes amis avec un code.</p>
       </div>
       <div class="panel invite-panel">
-        <h3>Rejoindre un groupe</h3>
-        <p class="muted">Entre le code d'invitation reçu.</p>
-        <form id="joinGroupForm" class="inline-form"><input id="inviteCode" maxlength="8" placeholder="CODE"
-            autocomplete="off" required><button class="secondary" type="submit">Rejoindre</button></form>
+        <h3 data-i18n="joinGroupTitle">Rejoindre un groupe</h3>
+        <p class="muted" data-i18n="joinGroupSub">Entre le code d'invitation reçu.</p>
+        <form id="joinGroupForm" class="inline-form">
+          <input id="inviteCode" maxlength="8" data-i18n-placeholder="codePlaceholder" placeholder="CODE" autocomplete="off" required>
+          <button class="secondary" type="submit" data-i18n="joinBtn">Rejoindre</button>
+        </form>
         <p id="joinError" class="error" role="alert"></p>
       </div>
     </section>
@@ -92,13 +97,14 @@
       <form id="groupForm" method="dialog">
         <div class="dialog-head">
           <div>
-            <p class="eyebrow">NOUVEAU GROUPE</p>
-            <h2>Créer un groupe</h2>
-          </div><button class="icon-btn" value="cancel" aria-label="Fermer">×</button>
+            <p class="eyebrow" data-i18n="newGroupEyebrow">NOUVEAU GROUPE</p>
+            <h2 data-i18n="createGroupTitle">Créer un groupe</h2>
+          </div>
+          <button class="icon-btn" value="cancel" data-i18n-aria="closeLabel" aria-label="Fermer">×</button>
         </div>
-        <label for="groupName">Nom du groupe</label><input id="groupName" maxlength="40"
-          placeholder="Ex. Les bus du lycée" required>
-        <button class="primary full" type="submit">Créer le groupe</button>
+        <label for="groupName" data-i18n="groupNameLabel">Nom du groupe</label>
+        <input id="groupName" maxlength="40" data-i18n-placeholder="groupNamePlaceholder" placeholder="Ex. Les bus du lycée" required>
+        <button class="primary full" type="submit" data-i18n="createGroupSubmit">Créer le groupe</button>
         <p id="groupError" class="error" role="alert"></p>
       </form>
     </dialog>
@@ -107,27 +113,30 @@
       <form id="tripForm" method="dialog">
         <div class="dialog-head">
           <div>
-            <p class="eyebrow">NOUVEAU TRAJET</p>
-            <h2>Ajouter un trajet</h2>
-          </div><button class="icon-btn" value="cancel" aria-label="Fermer">×</button>
+            <p class="eyebrow" data-i18n="newTripEyebrow">NOUVEAU TRAJET</p>
+            <h2 data-i18n="addTripTitle">Ajouter un trajet</h2>
+          </div>
+          <button class="icon-btn" value="cancel" data-i18n-aria="closeLabel" aria-label="Fermer">×</button>
         </div>
-        <label for="tripName">Nom du trajet</label><input id="tripName" maxlength="50" placeholder="Bus du matin"
-          required>
-        <label for="tripTime">Heure du départ</label><input id="tripTime" type="time" value="07:15" required>
-        <label>Jours actifs</label>
-        <div class="days">
-          <label><input type="checkbox" name="day" value="1" checked> Lun</label><label><input type="checkbox"
-              name="day" value="2" checked> Mar</label>
-          <label><input type="checkbox" name="day" value="3" checked> Mer</label><label><input type="checkbox"
-              name="day" value="4" checked> Jeu</label>
-          <label><input type="checkbox" name="day" value="5" checked> Ven</label><label><input type="checkbox"
-              name="day" value="6"> Sam</label><label><input type="checkbox" name="day" value="0"> Dim</label>
+        <label for="tripName" data-i18n="tripNameLabel">Nom du trajet</label>
+        <input id="tripName" maxlength="50" data-i18n-placeholder="tripNamePlaceholder" placeholder="Bus du matin" required>
+        <label for="tripTime" data-i18n="tripTimeLabel">Heure du départ</label>
+        <input id="tripTime" type="time" value="07:15" required>
+        <label data-i18n="activeDaysLabel">Jours actifs</label>
+        <div class="days" id="daysCheckboxes">
+          <label><input type="checkbox" name="day" value="1" checked> <span>Lun</span></label>
+          <label><input type="checkbox" name="day" value="2" checked> <span>Mar</span></label>
+          <label><input type="checkbox" name="day" value="3" checked> <span>Mer</span></label>
+          <label><input type="checkbox" name="day" value="4" checked> <span>Jeu</span></label>
+          <label><input type="checkbox" name="day" value="5" checked> <span>Ven</span></label>
+          <label><input type="checkbox" name="day" value="6"> <span>Sam</span></label>
+          <label><input type="checkbox" name="day" value="0"> <span>Dim</span></label>
         </div>
-        <label for="reminderTime">Quand recevoir la question ?</label><input id="reminderTime" type="time" value="06:30"
-          required>
-        <label for="deadlineTime">Heure limite de réponse</label><input id="deadlineTime" type="time" value="07:00"
-          required>
-        <button class="primary full" type="submit">Enregistrer le trajet</button>
+        <label for="reminderTime" data-i18n="reminderLabel">Quand recevoir la question ?</label>
+        <input id="reminderTime" type="time" value="06:30" required>
+        <label for="deadlineTime" data-i18n="deadlineLabel">Heure limite de réponse</label>
+        <input id="deadlineTime" type="time" value="07:00" required>
+        <button class="primary full" type="submit" data-i18n="saveTripSubmit">Enregistrer le trajet</button>
         <p id="tripError" class="error" role="alert"></p>
       </form>
     </dialog>
@@ -136,7 +145,7 @@
       <div id="groupDetailContent"></div>
     </dialog>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
-    <footer>BusBuddy <span>·</span> Bêta privée</footer>
+    <footer>BusBuddy <span>·</span> <span data-i18n="footerBeta">Bêta privée</span></footer>
   </main>
   <script type="module" src="src/app.js"></script>
 </body>
