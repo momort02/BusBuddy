@@ -613,9 +613,9 @@ function tripHtml(trip) {
             ${members}
 
             <div class="answer-actions">
-                <button data-trip="${safe(trip.id)}" data-answer="yes">${t("Yes")}</button>
-                <button data-trip="${safe(trip.id)}" data-answer="no">${t("No")}</button>
-                <button data-trip="${safe(trip.id)}" data-answer="unsure">${t("Unsure")}</button>
+                <button class="dataAnswer" data-trip="${safe(trip.id)}" data-answer="yes">${t("Yes")}</button>
+                <button class="dataAnswer" data-trip="${safe(trip.id)}" data-answer="no">${t("No")}</button>
+                <button class="dataAnswer" data-trip="${safe(trip.id)}" data-answer="unsure">${t("Unsure")}</button>
             </div>
         </article>
     `;
