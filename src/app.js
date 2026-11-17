@@ -10,13 +10,17 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 let authMode = "login", currentUser = null, groupUnsub = null, activeGroupUnsub = null, responsesUnsub = null, activeGroupId = null, activeGroupData = null, activeTrips = [], activeResponses = [];
 
-// Initialisation de la langue au chargement
+const toast = (message) => { $("toast").textContent = message; $("toast").classList.add("show"); setTimeout(() => $("toast").classList.remove("show"), 2600); };
+const showError = (id, message) => { $(id).textContent = message || ""; };
+const code = () => Math.random().toString(36).slice(2, 8).toUpperCase();
+const todayKey = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+const safe = (s = "") => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
 function applyAppLanguage(lang) {
     setLanguage(lang);
     $("langToggle").textContent = lang === "fr" ? "EN" : "FR";
     setAuthMode(authMode);
-    
-    // Mise à jour des jours dans le formulaire
+
     const days = getDict().days;
     document.querySelectorAll("#daysCheckboxes label").forEach(lbl => {
         const dayIndex = Number(lbl.querySelector("input").value);
@@ -24,7 +28,7 @@ function applyAppLanguage(lang) {
     });
 
     if (currentUser) {
-        $("welcomeTitle").textContent = `${t("hello")} ${currentUser.displayName || currentUser.email.split("@")}`;
+        $("welcomeTitle").textContent = `${t("hello")} ${currentUser.displayName || currentUser.email.split("@")[0]}`;
         listenGroups();
         if ($("groupDetailDialog").open && activeGroupData) {
             renderGroupDetail(activeTrips.map(tr => ({ ...tr, responses: activeResponses.filter(r => r.tripId === tr.id) })));
@@ -35,12 +39,6 @@ function applyAppLanguage(lang) {
 $("langToggle").addEventListener("click", () => {
     applyAppLanguage(currentLang === "fr" ? "en" : "fr");
 });
-
-const toast = (message) => { $("toast").textContent = message; $("toast").classList.add("show"); setTimeout(() => $("toast").classList.remove("show"), 2600); };
-const showError = (id, message) => { $(id).textContent = message || ""; };
-const code = () => Math.random().toString(36).slice(2, 8).toUpperCase();
-const todayKey = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
-const safe = (s = "") => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "'" }[c]));
 
 function setAuthMode(mode) {
     authMode = mode;
@@ -59,7 +57,7 @@ $("authForm").addEventListener("submit", async e => {
         const email = $("email").value.trim(), password = $("password").value;
         if (authMode === "register") {
             const cred = await createUserWithEmailAndPassword(auth, email, password);
-            await updateProfile(cred.user, { displayName: email.split("@") });
+            await updateProfile(cred.user, { displayName: email.split("@")[0] });
             await setDoc(doc(db, "users", cred.user.uid), { email, displayName: cred.user.displayName, createdAt: serverTimestamp() });
         } else {
             await signInWithEmailAndPassword(auth, email, password);
@@ -86,7 +84,7 @@ onAuthStateChanged(auth, user => {
     $("authView").classList.add("hidden");
     $("appView").classList.remove("hidden");
     $("logoutBtn").classList.remove("hidden");
-    $("welcomeTitle").textContent = `${t("hello")} ${user.displayName || user.email.split("@")}`;
+    $("welcomeTitle").textContent = `${t("hello")} ${user.displayName || user.email.split("@")[0]}`;
     listenGroups();
 });
 
@@ -203,6 +201,63 @@ function renderGroupDetail(trips = []) {
     $("copyCode").onclick = async () => { await navigator.clipboard.writeText(g.inviteCode); toast(t("codeCopied")); };
     $("addTrip").onclick = () => $("tripDialog").showModal();
     if ($("refreshCode")) $("refreshCode").onclick = async () => {
-        const oldCode = activeGroupData.inviteCode;
         const newCode = code();
-        await set // <-- Collez la suite de votre code ici (en utilisant getDict().status et getDict().days dans tripHtml)
+        await setDoc(doc(db, "invites", newCode), { groupId: activeGroupId, createdBy: currentUser.uid, createdAt: serverTimestamp() });
+        await updateDoc(doc(db, "groups", activeGroupId), { inviteCode: newCode });
+        activeGroupData.inviteCode = newCode;
+renderGroupDetail(trips);
+toast(t("codeRenewed"));
+};
+document.querySelectorAll("[data-answer]").forEach(b => b.onclick = () => answer(b.dataset.trip, b.dataset.answer));
+}
+function tripHtml(tr) {
+const statusLabels = getDict().status;
+const members = (activeGroupData.memberIds || []).map(uid => {
+const r = tr.responses.find(x => x.userId === uid);
+const name = uid === currentUser.uid ? t("you") : t("memberLabel", { id: uid.slice(0, 5) });
+return <div class="member-row"><span>${name}</span><span class="status ${r?.status || "pending"}">${statusLabels[r?.status || "pending"]}</span></div>;
+}).join("");
+return <article class="trip-card"> <div class="trip-head"> <h3>${safe(tr.name)}</h3> <span>${safe(tr.departureTime || "")}</span> </div> <p class="muted" style="font-size:11px;margin-top:5px">${t("todaysResponses")}</p> ${members} <div class="answer-actions"> <button data-trip="${tr.id}" data-answer="yes">${t("ansYes")}</button> <button data-trip="${tr.id}" data-answer="no">${t("ansNo")}</button> <button data-trip="${tr.id}" data-answer="unsure">${t("ansUnsure")}</button> </div> </article>;
+}
+async function answer(tripId, status) {
+try {
+const id = ${tripId}_${currentUser.uid}_${todayKey()};
+await setDoc(doc(db, "responses", id), { tripId, groupId: activeGroupId, userId: currentUser.uid, date: todayKey(), status, updatedAt: serverTimestamp() });
+toast(t("responseSaved"));
+} catch (e) {
+toast(t("responseError") + e.message);
+}
+}
+$("tripForm").addEventListener("submit", async e => {
+e.preventDefault();
+try {
+const days = [...document.querySelectorAll('input[name="day"]:checked')].map(x => Number(x.value));
+if (!days.length) throw new Error(t("selectOneDay"));
+await addDoc(collection(db, "trips"), {
+groupId: activeGroupId,
+name: $("tripName").value.trim(),
+departureTime: $("tripTime").value,
+activeDays: days,
+reminderTime: $("reminderTime").value,
+deadlineTime: $("deadlineTime").value,
+createdBy: currentUser.uid,
+createdAt: serverTimestamp()
+});
+$("tripDialog").close();
+$("tripForm").reset();
+toast(t("tripAdded"));
+} catch (err) {
+showError("tripError", err.message);
+}
+});
+$("notifyBtn").addEventListener("click", async () => {
+if (!("Notification" in window)) {
+toast(t("notifUnsupported"));
+return;
+}
+const p = await Notification.requestPermission();
+toast(p === "granted" ? t("notifGranted") : t("notifDenied"));
+});
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(console.error);
+// Applique la langue détectée au démarrage
+applyAppLanguage(currentLang);
