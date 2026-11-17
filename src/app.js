@@ -1,6 +1,6 @@
-import { initializeApp } from "https://gstatic.com";
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from "https://gstatic.com";
-import { getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, updateDoc, query, where, onSnapshot, serverTimestamp, arrayUnion } from "https://gstatic.com";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, updateDoc, query, where, onSnapshot, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 import { t, getDict, setLanguage, currentLang } from "./i18n.js";
 
@@ -205,59 +205,78 @@ function renderGroupDetail(trips = []) {
         await setDoc(doc(db, "invites", newCode), { groupId: activeGroupId, createdBy: currentUser.uid, createdAt: serverTimestamp() });
         await updateDoc(doc(db, "groups", activeGroupId), { inviteCode: newCode });
         activeGroupData.inviteCode = newCode;
-renderGroupDetail(trips);
-toast(t("codeRenewed"));
-};
-document.querySelectorAll("[data-answer]").forEach(b => b.onclick = () => answer(b.dataset.trip, b.dataset.answer));
+        renderGroupDetail(trips);
+        toast(t("codeRenewed"));
+    };
+    document.querySelectorAll("[data-answer]").forEach(b => b.onclick = () => answer(b.dataset.trip, b.dataset.answer));
 }
+
 function tripHtml(tr) {
-const statusLabels = getDict().status;
-const members = (activeGroupData.memberIds || []).map(uid => {
-const r = tr.responses.find(x => x.userId === uid);
-const name = uid === currentUser.uid ? t("you") : t("memberLabel", { id: uid.slice(0, 5) });
-return <div class="member-row"><span>${name}</span><span class="status ${r?.status || "pending"}">${statusLabels[r?.status || "pending"]}</span></div>;
-}).join("");
-return <article class="trip-card"> <div class="trip-head"> <h3>${safe(tr.name)}</h3> <span>${safe(tr.departureTime || "")}</span> </div> <p class="muted" style="font-size:11px;margin-top:5px">${t("todaysResponses")}</p> ${members} <div class="answer-actions"> <button data-trip="${tr.id}" data-answer="yes">${t("ansYes")}</button> <button data-trip="${tr.id}" data-answer="no">${t("ansNo")}</button> <button data-trip="${tr.id}" data-answer="unsure">${t("ansUnsure")}</button> </div> </article>;
+    const statusLabels = getDict().status;
+    const members = (activeGroupData.memberIds || []).map(uid => {
+        const r = tr.responses.find(x => x.userId === uid);
+        const name = uid === currentUser.uid ? t("you") : t("memberLabel", { id: uid.slice(0, 5) });
+        return `<div class="member-row"><span>${name}</span><span class="status ${r?.status || "pending"}">${statusLabels[r?.status || "pending"]}</span></div>`;
+    }).join("");
+    return `
+        <article class="trip-card">
+            <div class="trip-head">
+                <h3>${safe(tr.name)}</h3>
+                <span>${safe(tr.departureTime || "")}</span>
+            </div>
+            <p class="muted" style="font-size:11px;margin-top:5px">${t("todaysResponses")}</p>
+            ${members}
+            <div class="answer-actions">
+                <button data-trip="${tr.id}" data-answer="yes">${t("ansYes")}</button>
+                <button data-trip="${tr.id}" data-answer="no">${t("ansNo")}</button>
+                <button data-trip="${tr.id}" data-answer="unsure">${t("ansUnsure")}</button>
+            </div>
+        </article>
+    `;
 }
+
 async function answer(tripId, status) {
-try {
-const id = ${tripId}_${currentUser.uid}_${todayKey()};
-await setDoc(doc(db, "responses", id), { tripId, groupId: activeGroupId, userId: currentUser.uid, date: todayKey(), status, updatedAt: serverTimestamp() });
-toast(t("responseSaved"));
-} catch (e) {
-toast(t("responseError") + e.message);
+    try {
+        const id = `${tripId}_${currentUser.uid}_${todayKey()}`;
+        await setDoc(doc(db, "responses", id), { tripId, groupId: activeGroupId, userId: currentUser.uid, date: todayKey(), status, updatedAt: serverTimestamp() });
+        toast(t("responseSaved"));
+    } catch (e) {
+        toast(t("responseError") + e.message);
+    }
 }
-}
+
 $("tripForm").addEventListener("submit", async e => {
-e.preventDefault();
-try {
-const days = [...document.querySelectorAll('input[name="day"]:checked')].map(x => Number(x.value));
-if (!days.length) throw new Error(t("selectOneDay"));
-await addDoc(collection(db, "trips"), {
-groupId: activeGroupId,
-name: $("tripName").value.trim(),
-departureTime: $("tripTime").value,
-activeDays: days,
-reminderTime: $("reminderTime").value,
-deadlineTime: $("deadlineTime").value,
-createdBy: currentUser.uid,
-createdAt: serverTimestamp()
+    e.preventDefault();
+    try {
+        const days = [...document.querySelectorAll('input[name="day"]:checked')].map(x => Number(x.value));
+        if (!days.length) throw new Error(t("selectOneDay"));
+        await addDoc(collection(db, "trips"), {
+            groupId: activeGroupId,
+            name: $("tripName").value.trim(),
+            departureTime: $("tripTime").value,
+            activeDays: days,
+            reminderTime: $("reminderTime").value,
+            deadlineTime: $("deadlineTime").value,
+            createdBy: currentUser.uid,
+            createdAt: serverTimestamp()
+        });
+        $("tripDialog").close();
+        $("tripForm").reset();
+        toast(t("tripAdded"));
+    } catch (err) {
+        showError("tripError", err.message);
+    }
 });
-$("tripDialog").close();
-$("tripForm").reset();
-toast(t("tripAdded"));
-} catch (err) {
-showError("tripError", err.message);
-}
-});
+
 $("notifyBtn").addEventListener("click", async () => {
-if (!("Notification" in window)) {
-toast(t("notifUnsupported"));
-return;
-}
-const p = await Notification.requestPermission();
-toast(p === "granted" ? t("notifGranted") : t("notifDenied"));
+    if (!("Notification" in window)) {
+        toast(t("notifUnsupported"));
+        return;
+    }
+    const p = await Notification.requestPermission();
+    toast(p === "granted" ? t("notifGranted") : t("notifDenied"));
 });
+
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(console.error);
-// Applique la langue détectée au démarrage
+
 applyAppLanguage(currentLang);
