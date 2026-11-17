@@ -45,6 +45,7 @@ const translations = {
     footerBeta: "Bêta privée",
     days: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
     status: { yes: "Oui", no: "Non", unsure: "Je ne sais pas", pending: "En attente" },
+    answer-actions: {yes: "Oui", no: "Non", unsure: "Je ne sais pas"},
     // Messages dynamiques JS
     membersCount: "{n} membre(s)",
     groupCardMeta: "{n} membre(s) · Code {code}",
